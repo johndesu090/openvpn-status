@@ -30,7 +30,7 @@ Features
 Installation comes in two flavours. Either from source as per the following section or you can skip to the [docker section](https://github.com/AuspeXeu/openvpn-status#docker).
 ### 1. Get the source
 
-``git clone https://github.com/AuspeXeu/openvpn-status.git``
+``git clone https://github.com/johndesu090/openvpn-status.git``
 
 ### 2. Install dependencies
 
@@ -45,9 +45,9 @@ The configuration is located in ``cfg.json``.
 
 | Option   | Default       | Description  |
 | -------- |:-------------:| ------------ |
-| port     | `3013` | Port on which the server will be listening. |
+| port     | `81` | Port on which the server will be listening. |
 | bind     | `127.0.0.1` | Address to which the server will bind to. Change to `0.0.0.0` to make available on all interfaces. |
-| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656, "man_pwd": "1337", "netmask": "0.0.0.0/0"}]` | Array of servers. `man_pwd` is only needed if a password is set as per the [documentation](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/, `netmask` is only needed if connecing networks to filter entries) |
+| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7070, "man_pwd": "1337", "netmask": "0.0.0.0/0"}]` | Array of servers. `man_pwd` is only needed if a password is set as per the [documentation](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/, `netmask` is only needed if connecing networks to filter entries) |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
 | web.dateFormat | `HH:mm:ss - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
@@ -55,11 +55,11 @@ The configuration is located in ``cfg.json``.
 Example:
 ```
 {
-  "port": 3013,
+  "port": 81,
   "bind": "127.0.0.1",
   "servers": [
-    {"id": 0, "name": "Server A", "host": "127.0.0.1","man_port": 7656},
-    {"id": 1, "name": "Server B", "host": "127.0.0.1","man_port": 6756}
+    {"id": 0, "name": "Server A", "host": "127.0.0.1","man_port": 7070},
+    {"id": 1, "name": "Server B", "host": "127.0.0.1","man_port": 7070}
   ],
   "username": "admin",
   "password": "CHANGE THIS - DO NOT USE ANY DEFAULT HERE",
@@ -74,7 +74,7 @@ Example:
 Add the following line to your configuration file, e.g., `server.conf`. This will start the management console on port `7656` and make it accessible on `127.0.0.1`, i.e. this machine. Optionally, a password file can be specified as per the openvpn [manual](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/).
 
 ```
-management 127.0.0.1 7656 // As specified in cfg.json for this server
+management 127.0.0.1 7070 // As specified in cfg.json for this server
 ```
 
 Restart your OpenVPN server.
@@ -86,7 +86,7 @@ Before the application is ready to run, the frontend needs to be built. This is 
 ``npm run build``
 
 # Run
-This makes the application available on http://127.0.0.1:3013.
+This makes the application available on http://127.0.0.1:81.
 
 ### Manually
 ```
@@ -121,7 +121,7 @@ WantedBy=multi-user.target
 
 ## (optional) Running the service behind nginx as a reverse proxy
 
-In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to `3013` as it is by default.
+In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to `81` as it is by default.
 
 ```
 server {
@@ -129,7 +129,7 @@ server {
   server_name [domain];
 
   location / {
-    proxy_pass http://127.0.0.1:3013
+    proxy_pass http://127.0.0.1:81
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -144,7 +144,7 @@ server {
 As shown in the `docker-compose.yml` below, the folder server will be mounted to the host's file system. Upon boot, `openvpn-status` scans that folder for `.json` files and adds them as servers. An example of such a file is.
 
 ```
-{"name": "Server","host": "127.0.0.1","man_port": 7656}
+{"name": "Server","host": "127.0.0.1","man_port": 7070}
 ```
 
 ### Ports
@@ -161,7 +161,7 @@ As shown in the `docker-compose.yml` below, the folder server will be mounted to
 
 ```yml
 # Full example:
-# https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/docker-compose.sample.yml
+# https://raw.githubusercontent.com/johndesu090/openvpn-status/master/docker-compose.sample.yml
 
 version: '2'
 services:
@@ -175,7 +175,7 @@ services:
     volumes:
       - ./servers:/usr/src/app/servers'
     ports:
-      - 8080:3013
+      - 8080:81
     restart: "unless-stopped"
 
 ```
